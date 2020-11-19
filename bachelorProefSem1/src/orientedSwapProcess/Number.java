@@ -3,19 +3,25 @@ package orientedSwapProcess;
 import java.awt.Color;
 
 /**
- * An instance of this class represents a number (in a list, see class 'NumberList'). 
+ * An instance of this class represents a number (in a list, see class NumberList.java). The abstract use of this class will be that it represents
+ * the wires in the OSP.
+ * 
+ * As of yet, this class defines some things (namely 'position' and 'path') that are not used by the main program OrientedSwapProcess.java. 
+ * Therefor, it should just be viewed as a class storing an integer.
  */
 public class Number {
 	/**
 	 * The value this Number object represents
 	 */
 	private int value;
+	
 	/**
 	 * The position in the list this Number object is in.
 	 */
 	private int position;
+	
 	/**
-	 * The path that this Number has taken in the oriented swap proces
+	 * The path that this Number has taken in the oriented swap process
 	 */
 	private int[] path;
 	

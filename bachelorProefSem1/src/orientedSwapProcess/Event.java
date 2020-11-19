@@ -1,5 +1,11 @@
 package orientedSwapProcess;
 
+/**
+ * @dataAbstraction
+ * 
+ * An instance of this object represents a state (i.e. the position of the wires) of the OSP at a certain time.
+ * We will use these objects to record the evolution of the OSP through time so that we can the OSP later (see OSPdrawer.java)
+ */
 public class Event {
 	private int time;
 	private NumberList state;

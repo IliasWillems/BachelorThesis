@@ -2,6 +2,9 @@ package orientedSwapProcess;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * This class contains some test used for devoloping this package
+ */
 class TestSuite {
 
 	@Test
@@ -21,15 +24,10 @@ class TestSuite {
 		assert list.getValueAt(0) == 1;
 		
 		OrientedSwapProcess OSP = new OrientedSwapProcess(5);
-		int i = 0;
-		while(!OSP.Completed() && i <= 100000) {
-			OSP.doNextMoment();
-			i++;
-		}
-		
-		if(i == 100001) {
-			System.out.println("Max. number of iterations exceded");
-		}
+		OSP.printExponentialClocks();
+		System.out.println();
+		OSP.doNextMoment();
+		OSP.printExponentialClocks();
 	}
 
 }
