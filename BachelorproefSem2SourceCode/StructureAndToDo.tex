@@ -1,0 +1,38 @@
+\section*{Structure of the paper}
+\begin{enumerate}
+    \item Abstract
+    \item Introduction (Ilias)
+    \item Penalized Regression (Ilias)
+    \begin{enumerate}
+        \item Motivation for penalized regression: Find a data set where normal regression fails ($n \approx p$ or even $n < p$).
+        \item Introduce Ridge regression, explain and apply to data set
+        \item Introduce Lasso, explain and apply to (preferably the same) data set
+        \item Possibly explain some other methods (like subset selection)
+    \end{enumerate}
+    \item Cross-validation and parameter selection (Nina)
+    \begin{enumerate}
+        \item Motivate importance of parameter selection and need for method of comparing different parameters
+        \item Introduce cross-validation
+    \end{enumerate}
+    \item Comparison of Ridge and Lasso --> adhv epicurious dataset.
+    \begin{enumerate}
+        \item 700 predictors is not easy to interpret. Running Lasso on the data set will eliminate a lot of variables.
+        \item Set the tag for '$22$-minute meals' of all dished that have high rating to $1$ and run Lasso. It should select that predictor.
+        \item Restricting the data set to its first 700 rows makes $n \approx p$. Running Ridge on the data set will (hopefully) give better test errors than regular regression
+        \item Which regression methods has the lowest test error? 
+        \item Possibility to test multiple types of CV (although $k$-fold CV is best so maybe just use that?)
+        \item Fun questions:
+        \begin{itemize}
+            \item What ingredients should we mix to get the highest rating?
+            \item What are the proportions of nutritional values that get would get us the highest rating?
+        \end{itemize}
+    \end{enumerate}
+    \item Conclusion (Nina)
+    \begin{itemize}
+        \item Write something about SCAD?
+        \item Write something about LAR?
+        \item Write something about where this is used?
+        \item Summarize our findings?
+        \item Compare our own implementation of Ridge and Lasso to the one in the R-package?
+    \end{itemize}
+\end{enumerate}

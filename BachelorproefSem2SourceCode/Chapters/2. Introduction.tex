@@ -1,0 +1,7 @@
+\section{Introduction}
+In a first part of this paper, we explain regular least squares regression in a nutshell, introducing the necessary notations for the rest of the paper. In this discussion we also point out two problems with the method:
+\begin{itemize}
+    \item \textit{Prediction accuracy}: If $n \gg p$, then least squares fitting will have low variance. However, if $n$ is not much larger than $p$, least squares fitting tends to have high variance (overfitting). If $p > n$, then the variance is even infinite.
+    \item \textit{Model interpretability}: Removing unnecessary variables from the model improves the interpretablility of the result.
+\end{itemize}
+The solution to the first problem will lead us the ridge estimator. We will analyze, both theoretically and 

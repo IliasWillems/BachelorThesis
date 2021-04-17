@@ -1,0 +1,47 @@
+\usepackage[utf8]{inputenc}
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+\usepackage[T1]{fontenc}  
+
+\usepackage{graphicx, graphics, amsmath, amssymb, xcolor, mathtools, bbm, mathabx} % deleted asmthm because of conflict with already existing 'proof' environment
+\usepackage{siunitx}
+
+\usepackage{subcaption}
+\usepackage{stmaryrd}
+
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{changepage}
+\usepackage{setspace}
+\usepackage{tcolorbox}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newenvironment{proof}
+{\textbf{Proof:} \hspace{10pt}} % begin code
+{\hfill{$\Box$}} % end code
+
+\newcounter{example}
+
+\newenvironment{example}[0]% environment name
+{% begin code
+  \newline
+  \newline
+  \refstepcounter{example}%
+  \textbf{Example \theexample} \hspace{10pt}
+}%
+{\hfill \newline \newline% end code
+}
+
+\newtheorem{stelling}{Stelling}
+
+\usepackage[labelfont=bf, labelsep=colon, format=hang, textfont=singlespacing]{caption}
+
+\usepackage{booktabs}% for \midrule and \cmidrule macros
+\newcommand\headercell[1]{%
+   \smash[b]{\begin{tabular}[t]{@{}c@{}} #1 \end{tabular}}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
