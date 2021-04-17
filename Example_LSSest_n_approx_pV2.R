@@ -3,7 +3,7 @@ library(xtable)
 rm(list = ls())
 
 # Set variable
-Training_Set_Size = 10
+Training_Set_Size = 250
 Test_Set_Size = 260 - Training_Set_Size
 
 # Make sure input is valid

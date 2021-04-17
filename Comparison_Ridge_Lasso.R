@@ -13,10 +13,18 @@ memory.limit(size = 20000)
 
 # Read the data and omit all cases that are incomplete (i.e. that have an "NA"
 # in one or more columns).
-epi_r = read_csv(",School/Bachelorproef/Data/epi_r.csv")
+epi_r = read_csv("~/,School/Bachelorproef/Data/epi_r.csv")
 epi_r$title = NULL
 epi_r = na.omit(epi_r)
 epi_r = epi_r[1:15000,]
+
+epi_r_simulated = epi_r[1:120, 1:51]
+
+# Simulate date
+set.seed(1000)
+for (i in 6:51) {
+  epi_r_simulated[,i] = c(round(rnorm(120)))
+}
 
 # Rename some badly named columns
 names(epi_r)[names(epi_r) == "#cakeweek"] <- "HashTag_Cakeweek"
@@ -76,6 +84,50 @@ LSS_cv_MSE = mean(LS_MSE)
 # The result is 'NA'. This is because some coefficients from the Least Squares
 # model are 'NA'. This could be due to column being linearly dependent. Hence,
 # we cannot use linear regression for this data set.
+
+# -----------------------------------------------------------------------------
+# ------------ 0.1. Perform regular regression on simulated data. -------------
+# -----------------------------------------------------------------------------
+
+# Initialize necessary variables.
+Training_Set_Size = 60
+Test_Set_Size = 120 - Training_Set_Size
+Number_Of_iterations = 120 / Test_Set_Size
+
+# Make vector that will store the mean sum of squared errors
+LS_MSE = rep(0 , Number_Of_iterations)
+
+for(k in 0:Number_Of_iterations - 1) {
+  # Select training and test set
+  testset = (k*Test_Set_Size + 1):((k+1)*Test_Set_Size)
+  training = 1:120
+  training = training[!training %in% testset] 
+  
+  # Store the selected training data into a data matrix X and target vector y.
+  # Do the same for the test data.
+  X_training = model.matrix(rating~., epi_r_simulated)[,-1][c(training),]
+  y_training = epi_r_simulated$rating[training]
+  X_test = model.matrix(rating~., epi_r_simulated)[c(testset),]
+  y_test = epi_r_simulated$rating[testset]
+  
+  # Apply regular regression.
+  m = lm(y_training ~ X_training)
+  
+  # Store the regression coefficients in a vector
+  beta = coef(m)
+  
+  # Test the model with the test set
+  y_predict = X_test %*% beta
+  
+  # Calculate the mean sum of squared errors
+  LS_MSE[k+1] = (1/Test_Set_Size)*sum((y_test - y_predict)^2)
+}
+
+LSS_cv_MSE_simulated = mean(LS_MSE)
+# The result is 'NA'. This is because some coefficients from the Least Squares
+# model are 'NA'. This could be due to column being linearly dependent. Hence,
+# we cannot use linear regression for this data set.
+
 
 # -----------------------------------------------------------------------------
 # ------------ 1. Perform Lasso to see which predictors it selects ------------
@@ -163,7 +215,7 @@ names(epi_r[most_important])
 # immediately restrict the data to its first 700 rows.
 rm(list = ls())
 
-epi_r = read_csv(",School/Bachelorproef/Data/epi_r.csv")
+epi_r = read_csv("~/,School/Bachelorproef/Data/epi_r.csv")
 epi_r$title = NULL
 epi_r = na.omit(epi_r)
 epi_r = epi_r[1:15000,]
@@ -213,6 +265,58 @@ for(k in 0:(Number_Of_iterations - 1)) {
 }
 
 Ridge_cv_MSE = mean(ridge_MSE)
+
+# -----------------------------------------------------------------------------
+# --------------- 3.1 Apply ridge regression on simulated data ----------------
+# -----------------------------------------------------------------------------
+
+epi_r_simulated = epi_r[1:120, 1:51]
+
+# Simulate date
+set.seed(1000)
+for (i in 6:51) {
+  epi_r_simulated[,i] = c(round(rnorm(120)))
+}
+
+# Initialize necessary variables.
+Training_Set_Size = 60
+Test_Set_Size = 120 - Training_Set_Size
+Number_Of_iterations = 120 / Test_Set_Size
+
+ridge_MSE = rep(0 , Number_Of_iterations)
+
+for(k in 0:(Number_Of_iterations - 1)) {
+  # Select training and test set
+  testset = (k*Test_Set_Size + 1):((k+1)*Test_Set_Size)
+  training = 1:120
+  training = training[!training %in% testset]
+  
+  # Store the selected training data into a data matrix X and target vector y
+  X = model.matrix(rating~., epi_r_simulated)[,-1][c(training),]
+  y = epi_r_simulated$rating[training]
+  
+  # Create a set of values for the tuning parameter lambda used later in the
+  # gmlnet function.
+  lambdas = 10^seq(5, -5, by = -.1)
+  
+  # Apply ridge regression on the data.
+  cv_fit = cv.glmnet(X, y, alpha = 0, lambda = lambdas, intercept = TRUE,
+                     standardize = FALSE)
+  lambda_best = cv_fit$lambda.min
+  
+  ridge_model <- glmnet(X, y, alpha = 0, lambda = lambda_best, 
+                        intercept = TRUE, standardize = TRUE)
+  
+  # Test the model with the test set
+  X_test = model.matrix(rating~., epi_r_simulated)[c(testset),-1]
+  y_test = epi_r_simulated$rating[testset]
+  y_predict = predict(ridge_model, X_test, s = lambda_best)
+  
+  # MSSE = Mean Sum of Squared Errors
+  ridge_MSE[k+1] = (1/Test_Set_Size)*sum((y_test - y_predict)^2)
+}
+
+Ridge_cv_MSE_simulated = mean(ridge_MSE)
 
 # -----------------------------------------------------------------------------
 # ----------------- 3.2 Plotting the MSE as lambda varies ---------------------
@@ -323,6 +427,53 @@ for(k in 0:(Number_Of_iterations - 1)) {
 lasso_cv_MSE = mean(lasso_MSE)
 
 # -----------------------------------------------------------------------------
+# ---------------- 3.3 Apply the lasso on simulated data ----------------------
+# -----------------------------------------------------------------------------
+
+# Apply the lasso (code is mostly copied form
+# 'Example_lasso_n_approx_pV2.R'). This section takes a while to run
+
+# Initialize necessary variables.
+Training_Set_Size = 60
+Test_Set_Size = 120 - Training_Set_Size
+Number_Of_iterations = 120 / Test_Set_Size
+
+lasso_MSE = rep(0 , Number_Of_iterations)
+
+for(k in 0:(Number_Of_iterations - 1)) {
+  # Select training and test set
+  testset = (k*Test_Set_Size + 1):((k+1)*Test_Set_Size)
+  training = 1:120
+  training = training[!training %in% testset]
+  
+  # Store the selected training data into a data matrix X and target vector y
+  X = model.matrix(rating~., epi_r_simulated)[,-1][c(training),]
+  y = epi_r_simulated$rating[training]
+  
+  # Create a set of values for the tuning parameter lambda used later in the
+  # gmlnet function.
+  lambdas = 10^seq(5, -5, by = -.1)
+  
+  # Apply ridge regression on the data.
+  cv_fit = cv.glmnet(X, y, alpha = 1, lambda = lambdas, intercept = TRUE,
+                     standardize = FALSE)
+  lambda_best = cv_fit$lambda.min
+  
+  lasso_model <- glmnet(X, y, alpha = 1, lambda = lambda_best, 
+                        intercept = TRUE, standardize = TRUE)
+  
+  # Test the model with the test set
+  X_test = model.matrix(rating~., epi_r_simulated)[c(testset),-1]
+  y_test = epi_r_simulated$rating[testset]
+  y_predict = predict(lasso_model, X_test, s = lambda_best)
+  
+  # MSSE = Mean Sum of Squared Errors
+  lasso_MSE[k+1] = (1/Test_Set_Size)*sum((y_test - y_predict)^2)
+}
+
+lasso_cv_MSE_simulated = mean(lasso_MSE)
+
+# -----------------------------------------------------------------------------
 # ----------------- 3.4 Plotting the MSE as lambda varies ---------------------
 # -----------------------------------------------------------------------------
 
@@ -389,7 +540,7 @@ plot(log(lambdas), ridge_MSE, "l", col = 'blue', ylab = "MSE",
      main = "The MSE of the ridge and lasso model")
 lines(log(lambdas), lasso_MSE, "l", col = 'red')
 legend(-10, 1.73, legend = c("Ridge", "Lasso"), col = c('blue', 'red'),
-       lty=1:2, cex=1)
+       lty=1, cex=1)
 
 # -----------------------------------------------------------------------------
 # 4. Investigate which combination of ingredients will lead to the highest
@@ -447,3 +598,13 @@ highest_values = highest_values[!highest_values == 0]
 most_important = which(coeff[1:675] %in% highest_values)[]
 
 names(epi_r_ingredients[most_important])
+
+for (value in highest_values) {
+  index = which(coeff[1:675] == value)
+  print(paste(names(epi_r_ingredients[index]), "& ", toString(value), "\\"))
+}
+
+
+
+
+

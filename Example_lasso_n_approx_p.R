@@ -77,7 +77,7 @@ Hitters = Hitters[1:260,]
 
 # Initialize the necessary vectors. For simplicity, we will not use cross-
 # validation. Instead we keep using the same training and test sets.
-Training_Set_Size = 150
+Training_Set_Size = 100
 
 lambdas = 10^seq(5, -5, by = -.1)
 betas = matrix(0L, 5, length(lambdas))
@@ -125,6 +125,8 @@ plot(log(lambdas), MSE, "l", main = "A plot of the MSE (Lasso) in function of la
 lines(log(lambdas), rep(LS_MSE, length(lambdas)), "l", col ='red', lty = 3)
 points(x = log(lambdas[best_MSE_index]), y = MSE[best_MSE_index], pch = 25,
        col = 'blue', cex = 1, bg = 'blue')
+legend(x = -10, y = 190000, legend = c("MSE Lasso","MSE Least Squares"), 
+       col=c("black", "red"), lty=1:2, cex=0.8)
 
 # Plot the coefficients of the ridge model with respect to lambda
 cl <- rainbow(5)
